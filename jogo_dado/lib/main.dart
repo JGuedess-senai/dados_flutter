@@ -1,5 +1,4 @@
 // importa a biblioteca para trabalhar com números aleatórios (para o dado)
-import 'dart:ffi';
 import 'dart:math';
 // Importa o pacode principal do Flutter (widget, design... etc)
 import 'package:flutter/material.dart';
@@ -91,7 +90,8 @@ class _EstadoTelaConfiguracaoJogadores
                     );
                   }
                 },
-                style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50),
                 ),
                 // Botão de largura total.
                 child: const Text("Iniciar Jogo"),
@@ -195,21 +195,62 @@ class _EstadoTelaJogoDeDados extends State<TelaJogodeDados> {
         children: [
           Text(
             nome,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center, //é o justify-content: center do css
-              children: lancamentos.map((valor){
-                //map transforma o número do dado em um widget de imagem
-                return Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Image.network(
-                    imagensDados[valor]!, //Pega a url do mapa usando o 'valor' do dado
-                    width: 50,
-                    height: 50,
-                  ),
-                )
-              }),
-            )
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          Row(
+            mainAxisAlignment:
+                MainAxisAlignment.center, //é o justify-content: center do css
+            children: lancamentos.map((valor) {
+              //map transforma o número do dado em um widget de imagem
+              return Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Image.network(
+                  imagensDados[valor]!, //Pega a url do mapa usando o 'valor' do dado
+                  width: 50,
+                  height: 50,
+                  errorBuilder: (context, erro, StackTrace) =>
+                      const Icon(Icons.error, size: 40),
+                ),
+              );
+            }).toList(), // converter o resultado de volta para uma lista de widget
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Jogo de Dados')),
+      body: Column(
+        children: [
+          Row(
+            children: [
+              _construirColunaJogador(
+                widget.nomeJogador1,
+                _lancamentosJogador1,
+              ),
+              _construirColunaJogador(
+                widget.nomeJogador2,
+                _lancamentosJogador2,
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Text(
+            _mensagemResultado,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          const Spacer(), //Empurra o botão para a parte debaixo da tela.
+          ElevatedButton(
+            onPressed: _lancarDados,
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(double.infinity, 50),
+            ),
+            child: const Text('Jogar Dados'),
+          ),
         ],
       ),
     );
